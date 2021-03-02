@@ -3,22 +3,27 @@ import java.util.List;
 
 public class Autosalon {
 
-    int iMax = 10;
-    List<Auto> auto = new ArrayList<>(iMax);
+
+    static int maxQuantity = 10;
+    static List<Auto> autos = new ArrayList<>(maxQuantity);
 
     Customer customer = new Customer(this);
 
     public void sellAuto() {
-
-        System.out.printf("%s открыл продажи автомобилей!\n\n", Thread.currentThread().getName());
+        String autosalon = Thread.currentThread().getName();
+        int i = 0;
 
         try {
-            while (iMax != 0) {
+            System.out.printf("%s открыл продажи автомобилей!\n", autosalon);
+
+            while (maxQuantity != 0) {
+                i++;
                 Thread.sleep(5000);
-                System.out.printf("%s подготовил автомобиль к продаже\n", Thread.currentThread().getName());
-                auto.add(new Auto());
+                Auto auto = new Auto("Авто " + i);
+                getAuto().add(auto);
+                System.out.printf("%s подготовил %s к продаже\n", autosalon, auto.getNameAuto());
                 customer.recieveAuto();
-                iMax--;
+                maxQuantity--;
             }
 
         } catch (Exception e) {
@@ -26,12 +31,12 @@ public class Autosalon {
         }
     }
 
-//    public Auto buyAuto() {
-//        return customer.buyAutos();
-//    }
+    public void comeCustomer() {
+        customer.buyAuto();
+    }
 
-    List<Auto> getAuto() {
-        return auto;
+    public List<Auto> getAuto() {
+        return autos;
     }
 
 }
