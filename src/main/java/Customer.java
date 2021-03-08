@@ -5,23 +5,30 @@ public class Customer {
 
     private Autosalon autosalon;
 
-    private int ID;
+
+    ReentrantLock lock = new ReentrantLock();
+    Condition condition = lock.newCondition();
 
     public Customer(Autosalon autosalon) {
         this.autosalon = autosalon;
     }
 
-    public synchronized Auto buyAuto() {
+//    public synchronized Auto buyAuto() {
+        public Auto buyAuto() {
 
         String nameCustomer = Thread.currentThread().getName();
         Auto auto = null;
 
         try {
-            System.out.printf("%s зашёл в автосалон\n", nameCustomer);
+
+            lock.lock();
+
+          System.out.printf("%s зашёл в автосалон\n", nameCustomer);
 
             while (autosalon.getAuto().size() == 0) {
                 System.out.println("Нет автомобилей в наличии");
-                wait();
+                condition.await();
+//                wait();
             }
 
             auto = autosalon.getAuto().remove(0);
@@ -32,18 +39,26 @@ public class Customer {
         } catch (
                 Exception e) {
             e.printStackTrace();
+
+        } finally {
+            lock.unlock();
         }
 
         return auto;
 
     }
 
-    public synchronized void recieveAuto() {
+//    public synchronized void recieveAuto() {
+        public void recieveAuto() {
         try {
-            notify();
+            lock.lock();
+            Thread.sleep(1000);
+            condition.signal();
+//            notify();
         } catch (Exception e) {
             e.printStackTrace();
-
+        } finally {
+            lock.unlock();
         }
     }
 
